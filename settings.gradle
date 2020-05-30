@@ -1,0 +1,2 @@
+rootProject.name='Hephaestus'
+include ':app'
