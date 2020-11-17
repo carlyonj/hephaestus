@@ -15,7 +15,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Controller : Callback<SolMeta> {
     private val url = "https://api.nasa.gov/"
-    public fun start() {
+
+    fun start() {
         val moshi: Moshi = Moshi.Builder()
             .add(SolMetaAdapter())
             .build()
@@ -31,15 +32,17 @@ class Controller : Callback<SolMeta> {
     }
 
     override fun onResponse(call: Call<SolMeta>, response: Response<SolMeta>) {
-        Log.e("zzz", "zzz onResponse url: " + call.request().url().toString())
-        Log.e("zzz", "zzz onResponse message: " + response.message())
-        Log.e("zzz", "zzz onResponse val checks:  " + response.body()?.validity_checks)
-        Log.e("zzz", "zzz onResponse first utc: " + (response.body()?.solList!![0]?.temperature.average))
-        Log.e("zzz", "zzz onResponse keys: " + response.body()?.sol_keys)
+        var body = response.body()
+        if (response.body()!!.solList.isNotEmpty()) {
+            response.isSuccessful
+        }
+        for (solData in body?.solList.orEmpty()) {
+            Log.e("zzz", "zzz response: " + solData.firstUtc)
+
+        }
     }
 
     override fun onFailure(call: Call<SolMeta>, t: Throwable) {
-        Log.e("zzz", "zzz onFail " + t.message)
-        Log.e("zzz", "zzz onResponse " + call.request().url().toString())
+        Log.e("Controller", t.message)
     }
 }

@@ -1,16 +1,13 @@
 package com.example.hephaestus
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.hephaestus.api.Controller
-import com.example.hephaestus.models.SolData
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
+import com.example.hephaestus.di.DaggerControllerComponent
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,10 +24,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-//        val solData = mutableListOf<SolData>()
-//        val moshi: Moshi = Moshi.Builder().build()
-//        val adapter: JsonAdapter<SolData> = moshi.adapter(SolData::class.java)
-        val controller: Controller = Controller()
+        val component = DaggerControllerComponent.builder().build()
+        val controller = component.getController()
         controller.start()
     }
 }
