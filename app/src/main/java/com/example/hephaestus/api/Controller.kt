@@ -15,8 +15,10 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Controller : Callback<SolMeta> {
     private val url = "https://api.nasa.gov/"
+    private var callback: (()->Unit) = {}
 
-    fun start() {
+    fun start(callback: (()->Unit)) {
+        Log.e("zzz", "zzz start")
         val moshi: Moshi = Moshi.Builder()
             .add(SolMetaAdapter())
             .build()
@@ -26,23 +28,26 @@ class Controller : Callback<SolMeta> {
             .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
             .build()
 
+        this.callback = callback
         val insightApi: InsightApi = retrofit.create(InsightApi::class.java)
         val call = insightApi.loadChanges("juNRGzMRndO98bBRpZ8bw9pw6Wo4xnHZSe4bujSo", "json", "1.0")
         call.enqueue(this)
     }
 
     override fun onResponse(call: Call<SolMeta>, response: Response<SolMeta>) {
-        var body = response.body()
+        val body = response.body()
+        Log.e("zzz", "zzz onResponse")
         if (response.body()!!.solList.isNotEmpty()) {
+            callback.invoke()
             response.isSuccessful
-        }
-        for (solData in body?.solList.orEmpty()) {
-            Log.e("zzz", "zzz response: " + solData.firstUtc)
-
+            for (solData in body?.solList.orEmpty()) {
+                Log.e("zzz", "zzz response: " + solData.firstUtc)
+            }
         }
     }
 
     override fun onFailure(call: Call<SolMeta>, t: Throwable) {
         Log.e("Controller", t.message)
     }
+
 }

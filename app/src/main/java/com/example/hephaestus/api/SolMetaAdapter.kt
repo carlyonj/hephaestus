@@ -9,15 +9,15 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 class SolMetaAdapter {
     @FromJson
     fun fromJson(json: com.squareup.moshi.JsonReader): SolMeta {
-        var moshi = Moshi.Builder()
+        val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
-        var adapter = moshi.adapter<SolData>(SolData().javaClass)
+        val adapter = moshi.adapter<SolData>(SolData().javaClass)
 
-        var solMeta = SolMeta()
-        var solCount = 0;
+        val solMeta = SolMeta()
 
         json.beginObject()
+        var solCount = 0
         while (json.hasNext()) {
             val name = json.nextName()
             if (name.equals("sol_keys") || name.equals("validity_checks")) {
@@ -36,10 +36,10 @@ class SolMetaAdapter {
         return solMeta
     }
 
-    //A sol can probably have a value between 0 and 669 so anything between those can potentially be valid. this sucks
+    //A sol can probably have a value between 0 and 900 so anything between those can potentially be valid. this sucks
     private fun isSol(sol: String): Boolean {
         try {
-            if (sol.toInt() >= 0 && sol.toInt() <= 669) return true
+            if (sol.toInt() in 0..9000) return true
         } catch (e: NumberFormatException) {
             return false
         }

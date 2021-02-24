@@ -24,8 +24,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val component = DaggerControllerComponent.builder().build()
-        val controller = component.getController()
-        controller.start()
+
     }
 }
