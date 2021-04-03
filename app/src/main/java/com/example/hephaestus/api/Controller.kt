@@ -1,24 +1,19 @@
 package com.example.hephaestus.api
 
 import android.util.Log
-import com.example.hephaestus.models.SolData
 import com.example.hephaestus.models.SolMeta
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
-import retrofit2.Callback;
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class Controller : Callback<SolMeta> {
     private val url = "https://api.nasa.gov/"
-    private var callback: (()->Unit) = {}
+    private var callback: ((solMeta: SolMeta) -> Unit) = {}
 
-    fun start(callback: (()->Unit)) {
-        Log.e("zzz", "zzz start")
+    fun start(callback: ((solMeta: SolMeta) -> Unit)) {
         val moshi: Moshi = Moshi.Builder()
             .add(SolMetaAdapter())
             .build()
@@ -35,13 +30,15 @@ class Controller : Callback<SolMeta> {
     }
 
     override fun onResponse(call: Call<SolMeta>, response: Response<SolMeta>) {
-        val body = response.body()
-        Log.e("zzz", "zzz onResponse")
-        if (response.body()!!.solList.isNotEmpty()) {
-            callback.invoke()
+        val body: SolMeta = response.body() ?: SolMeta()
+
+        Log.e("zzz", "zzz onResponse key size " + body.solKeys.size)
+        if (body.solList.isNotEmpty()) {
+            Log.e("zzz", "zzz onResponse sol list " + (body.solList.size))
+            callback.invoke(body)
             response.isSuccessful
-            for (solData in body?.solList.orEmpty()) {
-                Log.e("zzz", "zzz response: " + solData.firstUtc)
+            for (solData in body.solList) {
+                Log.e("zzz", "zzz response: " + solData.season)
             }
         }
     }

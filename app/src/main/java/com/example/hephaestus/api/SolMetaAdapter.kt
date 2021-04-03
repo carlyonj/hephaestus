@@ -1,10 +1,11 @@
 package com.example.hephaestus.api
 
+import android.util.Log
 import com.example.hephaestus.models.SolData
 import com.example.hephaestus.models.SolMeta
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Moshi
+import com.squareup.moshi.*
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import java.util.*
 
 class SolMetaAdapter {
     @FromJson
@@ -17,22 +18,32 @@ class SolMetaAdapter {
         val solMeta = SolMeta()
 
         json.beginObject()
-        var solCount = 0
         while (json.hasNext()) {
             val name = json.nextName()
-            if (name.equals("sol_keys") || name.equals("validity_checks")) {
+            if (name.equals("validity_checks")) {
                 json.skipValue()
-                continue;
+                continue
+            }
+            if (name.equals("sol_keys")) {
+                json.beginArray()
+                while (json.hasNext()) {
+                    Log.e("zzz", "zzz  added key")
+                    solMeta.solKeys.add(json.nextString())
+                }
+                json.endArray()
+                continue
             }
             if (isSol(name)) {
+                Log.e("zzz", "zzz  added sol " + name)
                 val solDetail = adapter.fromJson(json)!!
-                solMeta.solList[solCount++] = solDetail
+                solDetail.sol = name
+                solMeta.solList.add(solDetail)
             } else {
                 json.skipName()
             }
         }
         json.endObject()
-
+        removeInvalidSols(solMeta)
         return solMeta
     }
 
@@ -44,5 +55,13 @@ class SolMetaAdapter {
             return false
         }
         return false
+    }
+
+    private fun removeInvalidSols(solMeta: SolMeta)  {
+            for (sol in solMeta.solList) {
+                if (!solMeta.solKeys.contains(sol.sol) || sol.equals("invalid")) {
+                    solMeta.solList.remove(sol)
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.hephaestus.Contracts
+package com.example.hephaestus.contracts
 
 import com.example.hephaestus.models.SolMeta
 import com.example.hephaestus.presenters.BasePresenter
@@ -7,7 +7,7 @@ import com.example.hephaestus.views.BaseView
 interface MainContract {
     interface Presenter : BasePresenter {
         fun onViewCreated()
-        fun onLoadWeather()
+        fun onLoadWeather(solMeta: SolMeta)
     }
 
     interface View : BaseView<Presenter> {

@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 class SolData {
+    var sol: String = "invalid"
     @field:Json(name = "AT")
     public var temperature = DataDetail()
     @field:Json(name = "First_UTC")

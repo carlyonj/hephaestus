@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 class DataDetail {
     @field:Json(name = "av")
-    public var average = 00.00
+    public var average = "N/A"
     @field:Json(name = "ct")
     public var count = 00.00
     @field:Json(name = "mn")

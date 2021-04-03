@@ -7,22 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.example.hephaestus.Contracts.MainContract
+import com.example.hephaestus.contracts.MainContract
 import com.example.hephaestus.R
-import com.example.hephaestus.api.Controller
-import com.example.hephaestus.di.DaggerControllerComponent
 import com.example.hephaestus.models.SolData
 import com.example.hephaestus.models.SolMeta
 import com.example.hephaestus.presenters.MainPresenter
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), MainContract.View {
     var solList: Array<SolData> = Array(7) {
         SolData()
     }
     internal lateinit var presenter: MainContract.Presenter
-    internal lateinit var textView:  TextView
+    internal lateinit var tempText:  TextView
+    internal lateinit var pressureText:  TextView
+    internal lateinit var solText:  TextView
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -30,7 +29,9 @@ class HomeFragment : Fragment(), MainContract.View {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        textView = root.findViewById(R.id.text_home)
+        tempText = root.findViewById(R.id.temp_val)
+        pressureText = root.findViewById(R.id.pressure_val)
+        solText = root.findViewById(R.id.sol_val)
 
         setPresenter(MainPresenter(this))
         presenter.onViewCreated()
@@ -44,9 +45,9 @@ class HomeFragment : Fragment(), MainContract.View {
     }
 
     override fun displayWeatherState(weatherState: SolMeta) {
-        val string: String = "Temperature: " + weatherState.solList.get(0).temperature.average
-        Log.e("zzz", "zzz setWeather")
-        textView.setText(string)
+        tempText.setText(weatherState.solList[0].temperature.average)
+        pressureText.setText(weatherState.solList[0].pressure.average)
+        solText.setText(weatherState.solList[0].sol)
     }
 
     override fun setPresenter(presenter: MainContract.Presenter) {
